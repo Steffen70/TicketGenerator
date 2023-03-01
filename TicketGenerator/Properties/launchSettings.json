@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TicketGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "100"
+    }
+  }
+}
