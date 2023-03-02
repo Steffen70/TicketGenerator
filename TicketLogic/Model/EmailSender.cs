@@ -1,11 +1,10 @@
 ﻿using MimeKit;
 using MailKit.Net.Smtp;
 using TicketDal.Settings;
-using TicketLogic.Common;
 
 namespace TicketLogic.Model
 {
-    public class EmailSender : IEmailSender
+    public class EmailSender
     {
         private readonly EmailConfiguration _emailConfig;
         public EmailSender(EmailConfiguration emailConfig)

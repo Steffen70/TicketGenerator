@@ -15,10 +15,4 @@
 		<ProjectReference Include="..\TicketDal\TicketDal.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Update="flyer_millennium.jpeg">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
 </Project>
