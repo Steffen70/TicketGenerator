@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using TicketDal.Entities;
-using TicketDal.Helpers;
+using TicketDal.Settings;
+using TicketGenerator.Helpers;
 
-namespace TicketDal.Data
+namespace TicketGenerator.Data
 {
     public class DataContext : DbContext
     {
@@ -20,7 +20,7 @@ namespace TicketDal.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(S.I.ConnectionString);
+            optionsBuilder.UseMySQL(AppSettings.I.ConnectionString ?? throw new Exception("Configure the database connection string in your appsettings.json"));
         }
     }
 }

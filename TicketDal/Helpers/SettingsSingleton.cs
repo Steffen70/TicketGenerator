@@ -8,7 +8,7 @@ namespace TicketDal.Helpers
 
         public static TSettings GetSettings()
         {
-            const string fileName = @".\appsettings.json";
+            string fileName = System.Environment.GetEnvironmentVariable("APPSETTINGS") ?? throw new Exception("Set 'APPSETTINGS' environment variable!");
 
             var settings = File.ReadAllText(fileName);
             return JsonSerializer.Deserialize<TSettings>(settings) ?? throw new FileNotFoundException();

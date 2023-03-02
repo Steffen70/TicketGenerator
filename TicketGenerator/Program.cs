@@ -1,52 +1,50 @@
-﻿using System.Drawing;
-using Ionic.Zip;
-using TicketDal.Data;
-using TicketDal.Entities;
+﻿using AutoMapper;
+using System.Drawing;
+using TicketDal.Settings;
+using TicketGenerator.Data;
+using TicketLogic.Model;
+using Ticket = TicketDal.Entities.Ticket;
 
 namespace TicketGenerator
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static readonly List<string> Emails = new()
+        {
+            "steffen@seventy.mx",
+            "steffendionys@gmail.com"
+        };
+
+        private static void Main()
         {
             using var context = new DataContext();
+            var config = new MapperConfiguration(c => c.CreateMap<Ticket, TicketLogic.Model.Ticket>());
 
-            if (!args.Any() || !int.TryParse(args[0], out var n))
-                throw new ArgumentException("Enter how many tickets you want to generate! (args[0])");
+            var mapper = new Mapper(config);
+
+            var sender = new EmailSender(AppSettings.I.EmailConfiguration ?? throw new Exception("EmailConfiguration is not set!"));
 
             var charge = Guid.NewGuid();
-            var flyer = Image.FromFile($@".\{S.I.FlyerImageName}");
+            var flyer = Image.FromFile($@".\{AppSettings.I.FlyerImageName}");
 
             var counter = 0;
-            while (counter < n)
+            while (counter < Emails.Count)
             {
-                var ticket = new Ticket(charge);
+                var ticket = new Ticket(charge, Emails[counter]);
 
                 context.Tickets.Add(ticket);
 
-                Console.WriteLine($"Ticket: {ticket.TicketId}, {ticket.Print(flyer)}");
+                var logicTicket = mapper.Map<TicketLogic.Model.Ticket>(ticket);
+                logicTicket.GenerateTicketBitmap(flyer, ".");
+
+                logicTicket.SendViaMail(sender);
 
                 counter++;
             }
 
-            //Zip tickets
-
-            using (var zip = new ZipFile())
-            {
-                zip.AddDirectory(S.I.TempFolder, charge.ToString());
-                zip.Save($"{charge}.zip");
-            }
-
-            //Clear temp
-
-            var dir = new DirectoryInfo(S.I.TempFolder ?? throw new ArgumentException("Configure the temp path!"));
-            dir.Delete(true);
-
-            //Save tickets to db
-
             context.SaveChanges();
 
-            Console.WriteLine($"Charge: {charge}, was packaged successfully");
+            Console.WriteLine($"Charge: {charge}, was Emailed successfully");
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using TicketDal.Helpers;
 
-namespace TicketDal.Data
+namespace TicketDal.Settings
 {
-    public class S : SettingsSingleton<S>
+    public class AppSettings : SettingsSingleton<AppSettings>
     {
         public string? ConnectionString { get; set; }
         public string? FlyerImageName { get; set; }
         public string? TempFolder { get; set; }
+        public EmailConfiguration? EmailConfiguration { get; set; }
     }
 }
